@@ -1,0 +1,96 @@
+.student-wrapper {
+  background-color: #f0f2f5;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+.student-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5%;
+  background: #ffffff;
+  border-bottom: 1px solid #ddd;
+}
+
+.student-container {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr; /* Left side smaller, Right side larger */
+  gap: 30px;
+  padding: 40px 5%;
+}
+
+.form-section, .history-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.complaint-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.complaint-form label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.complaint-form input, .complaint-form textarea {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.submit-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* History Cards */
+.complaint-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.complaint-card {
+  border: 1px solid #eee;
+  padding: 15px;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.card-header h4 { margin: 0; color: #1e293b; }
+
+.status-tag {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+.status-tag.pending { background: #fef3c7; color: #92400e; }
+.status-tag.in-progress { background: #dbeafe; color: #1e40af; }
+.status-tag.resolved { background: #d1fae5; color: #065f46; }
+
+.logout-btn { background: #fee2e2; color: #dc2626; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
