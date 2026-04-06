@@ -30,5 +30,4 @@ public class ComplaintEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    // Getters & Setters
 }

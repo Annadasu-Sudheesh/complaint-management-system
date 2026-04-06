@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class UserEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
 
     private String name;
