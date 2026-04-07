@@ -4,12 +4,14 @@
 Smart Complaint Management System
 
 ## 1. Introduction
-The Smart Complaint Management System is a full-stack web application designed to streamline the process of registering, tracking, and resolving complaints within an organization or university. It enables students to submit complaints and allows administrators to manage and resolve them efficiently.
+The Smart Complaint Management System is a full-stack web application designed to streamline the process of  tracking, and resolving complaints within an organization or university. It enables students to submit complaints with optional file attachments and allows administrators to manage, prioritize, and resolve them efficiently with full tracking.
 
 ## 2. Objectives
-- Provide a platform for users to submit complaints easily
-- Enable administrators to monitor and resolve issues
-- Ensure transparency through status tracking
+- Provide an easy interface for users to submit complaints
+- Allow file attachments as proof (images/documents)
+- Enable administrators to manage complaints effectively
+- Provide real-time status tracking (Pending → In Progress → Resolved)
+- Ensure transparency with timestamps (created & resolved time)
 - Implement role-based authentication (Student/Admin)
 
 ## 3. System Architecture
@@ -19,16 +21,16 @@ Frontend:
 - React JS for UI and user interaction
 
 Backend:
-- Spring Boot for REST APIs
+- Spring Boot for REST APIs and business logic
 
 Database:
-- MySQL for storing users and complaints
+- MySQL for storing users, complaints, and metadata
 
 ## 4. Technologies Used
 
 | Layer           | Technology         |
 |----------------|------------------|
-| Frontend       | React JS         |
+| Frontend       | React JS (Vite)  |
 | Backend        | Spring Boot      |
 | Database       | MySQL            |
 | API Testing    | Postman          |
@@ -36,70 +38,104 @@ Database:
 
 ## 5. Modules
 
-User Module:
-- Signup/Login
-- Submit complaints
+### User Module:
+- Login
+- Submit complaint with file upload
 - View complaint history
+- View status, priority, remark
+- View created and resolved time
 
-Admin Module:
+### Admin Module:
 - View all complaints
-- Update complaint status
-- Resolve complaints
+- Update complaint status (Pending → In Progress → Resolved)
+- Set priority (Low, Medium, High)
+- Add remarks for complaints
+- View attached files
+- Restrict updates after resolution
 
 ## 6. Functional Requirements
-- User authentication
+- Secure user authentication
 - Role-based access control
-- Complaint submission
-- Complaint tracking
-- Admin dashboard
-- Status updates
+- Complaint submission with file upload
+- Complaint tracking system
+- Admin dashboard with full control
+- Status transitions control (no changes after resolved)
+- Priority management
+- Remark system
+- Timestamp tracking (createdAt, resolvedAt)
 
 ## 7. Database Design
 
-User Table:
-- id
+### User Table:
+- id (Primary Key)
 - name
 - email
 - password
-- role
+- role (STUDENT / ADMIN)
 
-Complaint Table:
-- id
+### Complaint Table:
+- id (Primary Key)
 - title
 - description
-- status
+- status (Pending / In Progress / Resolved)
 - remark
-- priority
-- user_id
+- priority (Low / Medium / High)
+- file_path
+- created_at
+- resolved_at
+- user_id (Foreign Key)
 
 ## 8. API Endpoints
 
-Authentication:
+### Authentication:
 - POST /login
 - POST /signup
 
-Complaints:
-- POST /complaints
+### Complaints:
+- POST /complaints (with file upload)
 - GET /complaints/{userId}
 - GET /all-complaints
 - PUT /complaints/{id}
 
 ## 9. System Workflow
-1. User logs in
-2. Student submits complaint
-3. Complaint stored in database
-4. Admin views complaints
-5. Admin updates status
-6. User tracks status
 
-## 10. Future Enhancements
-- Profile management
-- Notifications
-- File upload
-- Analytics dashboard
+1. User logs in (Student/Admin)
+2. Student submits complaint (with optional file)
+3. Complaint is stored with:
+   - status = Pending
+   - priority = Low
+   - createdAt timestamp
+4. Admin views complaints dashboard
+5. Admin updates:
+   - status
+   - priority
+   - remark
+6. When status = Resolved:
+   - resolvedAt timestamp is stored
+   - further changes are restricted
+7. Student tracks complaint progress in dashboard
 
-## 11. Conclusion
-The system provides an efficient and scalable solution for complaint handling with role-based access and real-time updates.
+## 10. Features Implemented
 
---------------------------------------------------------------------------------
+- File upload system (proof attachment)
+- Complaint status flow (Pending → In Progress → Resolved)
+- Admin priority control
+- Admin remarks system
+- Created and resolved timestamps
+- Role-based routing (Admin / Student)
+- Protected routes (unauthorized access blocked)
+- Dynamic UI updates (no reload required)
+- File viewing via URL
+- Status locking after resolution
 
+## 11. Future Enhancements
+- User profile management
+- Email/SMS notifications
+- Complaint categorization
+- Analytics dashboard (charts)
+- Search and filtering system
+- Mobile responsive UI improvements
+- Real-time updates using WebSockets
+
+## 12. Conclusion
+The Smart Complaint Management System provides a robust and scalable solution for managing complaints efficiently. With added features like file uploads, priority management, timestamps, and role-based access, the system ensures transparency, accountability, and improved resolution workflow.

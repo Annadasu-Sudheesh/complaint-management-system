@@ -1,41 +1,52 @@
 # 📘 README.md
 
-# 🚀 Smart Complaint Management System
+## Title
+Smart Complaint Management System
 
-A full-stack web application that allows students to submit complaints and track their status, while administrators manage and resolve them efficiently.
+## 1. Introduction
+The Smart Complaint Management System is a full-stack web application designed to streamline the process of  tracking, and resolving complaints within an organization or university. It allows students to submit complaints with optional file attachments and enables administrators to manage, prioritize, and resolve them efficiently with full tracking.
 
----
+## 2. Features
 
-## Features
+Student:
+- Login
+- Submit complaints with file upload
+- View complaint history
+- Track status (Pending, In Progress, Resolved)
+- View priority and admin remarks
+- View created and resolved dates
 
-- User Authentication (Student/Admin)
-- Submit Complaints
-- Track Complaint Status
-- Admin Dashboard
-- Update Status (Pending, In Progress, Resolved)
-- Role-Based Access Control
+Admin:
+- Secure login
+- View all complaints
+- Update status
+- Set priority (Low, Medium, High)
+- Add remarks
+- View uploaded files
+- Cannot modify once resolved
 
----
+## 3. Technologies Used
 
-## Tech Stack
+Frontend:
+- React JS (Vite)
 
-- Frontend: React JS
-- Backend: Spring Boot (Java)
-- Database: MySQL
-- Version Control: Git & GitHub
+Backend:
+- Spring Boot (Java)
 
----
+Database:
+- MySQL
 
-## Project Structure
+Other Tools:
+- Postman (API Testing)
+- Git & GitHub (Version Control)
+
+## 4. Project Structure
 
 solo_project/
-│
-├── demo-frontend/   # React frontend
-├── demo/            # Spring Boot backend
+- demo-frontend/   (React frontend)
+- demo/            (Spring Boot backend)
 
----
-
-## How to Run
+## 5. How to Run
 
 Backend:
 1. Open project in IDE
@@ -43,39 +54,90 @@ Backend:
 3. Runs on http://localhost:8080
 
 Frontend:
-cd demo-frontend
-npm install
-npm run dev
+1. Open terminal
+2. cd demo-frontend
+3. npm install
+4. npm run dev
+5. Runs on http://localhost:5173
 
-Runs on http://localhost:5173
-
----
-
-## API Endpoints
+## 6. API Endpoints
 
 Authentication:
-POST /login
-POST /signup
+- POST /login
+- POST /signup
 
 Complaints:
-POST /complaints
-GET /complaints/{userId}
-GET /all-complaints
-PUT /complaints/{id}
+- POST /complaints (with file upload)
+- GET /complaints/{userId}
+- GET /all-complaints
+- PUT /complaints/{id}
 
----
+## 7. Workflow
 
-## Workflow
+1. User logs in (Student/Admin)
+2. Student submits complaint (with optional file)
+3. Complaint is stored with:
+   - status = Pending
+   - priority = Low
+   - createdAt timestamp
+4. Admin views complaints
+5. Admin updates:
+   - status
+   - priority
+   - remark
+6. When complaint is resolved:
+   - resolvedAt timestamp is saved
+   - further updates are restricted
+7. Student tracks complaint progress
 
-- User logs in
-- Student submits complaint
-- Admin reviews complaints
-- Admin updates status
-- Student tracks complaint
+## 8. Database Design
 
----
+User Table:
+- id
+- name
+- email
+- password
+- role
 
-## Author
+Complaint Table:
+- id
+- title
+- description
+- status
+- priority
+- remark
+- file_path
+- created_at
+- resolved_at
+- user_id
 
-Sudheesh Kumar  
+## 9. Features Implemented
+
+- File upload system
+- Complaint status flow
+- Admin priority control
+- Admin remark system
+- Created and resolved timestamps
+- Role-based access
+- Protected routes
+- Dynamic UI updates
+- File viewing system
+- Status locking after resolution
+
+## 10. Future Enhancements
+
+- Profile management
+- Notifications (Email/SMS)
+- Complaint categories
+- Analytics dashboard
+- Search and filters
+- Dark mode UI
+- Real-time updates
+
+## 11. Author
+
+Sudheesh Annadasu 
 GitHub: https://github.com/Annadasu-Sudheesh
+
+## 12. Conclusion
+This system provides an efficient and scalable solution for complaint handling with modern features like file uploads, priority management, timestamps, and role-based access, ensuring transparency and improved workflow.

@@ -5,70 +5,51 @@ import "../Admin.css";
 
 function Admin() {
   const [complaints, setComplaints] = useState([]);
-  const [user] = useState(() => {
-    try {
-      const data = localStorage.getItem("user");
-      return data ? JSON.parse(data) : null;
-    } catch {
-      return null;
-    }
-  });
   const navigate = useNavigate();
 
-  const fetchAll = async () => {
-    const res = await axios.get("http://localhost:8080/all-complaints");
-    return res.data;
-  };
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  // 🔐 Load user safely
+  // 🔐 Protect route
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-
-    if (user.role !== "ADMIN") {
-      navigate("/dashboard");
-    }
+    if (!user) navigate("/login");
+    else if (user.role !== "ADMIN") navigate("/dashboard");
   }, [user, navigate]);
 
   // 🔄 Fetch all complaints
-  useEffect(() => {
-    let isMounted = true;
-
-    fetchAll()
-      .then((data) => {
-        if (isMounted) setComplaints(data);
-      })
-      .catch((err) => {
-        console.error("Error fetching complaints", err);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  // 🔄 Update complaint status
-  const updateStatus = async (id, newStatus) => {
+  const fetchAll = async () => {
     try {
-      await axios.put(`http://localhost:8080/complaints/${id}`, {
-        status: newStatus,
-      });
-      const data = await fetchAll();
-      setComplaints(data);
-    } catch {
-      alert("Failed to update status");
+      const res = await axios.get("http://localhost:8080/all-complaints");
+      setComplaints(res.data);
+    } catch (err) {
+      console.error("Error fetching complaints", err);
     }
   };
 
-  // 🚪 Logout
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
+  useEffect(() => {
+    fetchAll();
+  }, []);
+
+  // ✅ Update complaint
+  const updateComplaint = async (id, status, priority, remark) => {
+    try {
+      await axios.put(`http://localhost:8080/complaints/${id}`, {
+        status,
+        priority,
+        remark
+      });
+
+      // 🔥 Instant UI update
+      setComplaints(prev =>
+        prev.map(c =>
+          c.id === id ? { ...c, status, priority, remark } : c
+        )
+      );
+
+    } catch (err) {
+      alert(err.response?.data || "Update failed");
+    }
   };
 
-  // ❗ Prevent rendering before user loads
   if (!user) return null;
 
   return (
@@ -76,104 +57,179 @@ function Admin() {
 
       {/* 🔷 NAVBAR */}
       <nav className="admin-nav">
-        <h1>Admin Control Center</h1>
-
-        <div className="admin-info">
-          <span>
-            Welcome, <strong>{user.name}</strong>
-          </span>
-
-          <button className="logout-btn" onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
+        <h2>Admin Panel</h2>
+        <button
+          className="logout-btn"
+          onClick={() => {
+            localStorage.clear();
+            navigate("/login");
+          }}
+        >
+          Logout
+        </button>
       </nav>
 
-      {/* 🔷 MAIN CONTENT */}
-      <div className="admin-container">
+      {/* 🔷 TABLE */}
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Priority</th>
+              <th>Remark</th>
+              <th>File</th>
+              <th>Actions</th>
+              <th>Issued On</th>
+              <th>Resolved On</th>
+            </tr>
+          </thead>
 
-        {/* 📊 STATS */}
-        <div className="stats-row">
-          <div className="stat-card">
-            <h3>{complaints.length}</h3>
-            <p>Total Complaints</p>
-          </div>
+          <tbody>
+            {complaints.map((c) => (
+              <tr key={c.id}>
+                <td>{c.title}</td>
+                <td>{c.description}</td>
 
-          <div className="stat-card pending">
-            <h3>
-              {complaints.filter(c => c.status === "Pending").length}
-            </h3>
-            <p>Pending</p>
-          </div>
+                {/* STATUS */}
+                <td>
+                  <span className={`status ${c.status.toLowerCase().replace(" ", "-")}`}>
+                    {c.status}
+                  </span>
+                </td>
 
-          <div className="stat-card resolved">
-            <h3>
-              {complaints.filter(c => c.status === "Resolved").length}
-            </h3>
-            <p>Resolved</p>
-          </div>
-        </div>
+                {/* PRIORITY */}
+                <td>
+                  <select
+                    value={c.priority || "Low"}
+                    disabled={c.status === "Resolved"}
+                    onChange={(e) =>
+                      updateComplaint(
+                        c.id,
+                        c.status,
+                        e.target.value,
+                        c.remark
+                      )
+                    }
+                  >
+                    <option>Low</option>
+                    <option>Medium</option>
+                    <option>High</option>
+                  </select>
+                </td>
 
-        {/* 📋 TABLE */}
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
+                {/* REMARK */}
+                <td>
+                  <input
+                    type="text"
+                    placeholder="Add remark"
+                    value={c.remark || ""}
+                    disabled={c.status === "Resolved"}
+                    onChange={(e) => {
+                      const newRemark = e.target.value;
 
-            <tbody>
-              {complaints.map((c) => (
-                <tr key={c.id}>
-                  <td className="complaint-title">{c.title}</td>
-                  <td className="complaint-desc">{c.description}</td>
+                      setComplaints(prev =>
+                        prev.map(item =>
+                          item.id === c.id
+                            ? { ...item, remark: newRemark }
+                            : item
+                        )
+                      );
+                    }}
+                    onBlur={() =>
+                      updateComplaint(
+                        c.id,
+                        c.status,
+                        c.priority,
+                        c.remark
+                      )
+                    }
+                  />
+                </td>
 
-                  <td>
-                    <span
-                      className={`status-badge ${
-                        c.status
-                          ? c.status.toLowerCase().replace(" ", "-")
-                          : "pending"
-                      }`}
+                {/* FILE */}
+                <td>
+                  {c.filePath ? (
+                    <a
+                      href={`http://localhost:8080/${c.filePath}`}
+                      target="_blank"
+                      rel="noreferrer"
                     >
-                      {c.status}
+                      View
+                    </a>
+                  ) : (
+                    "No File"
+                  )}
+                </td>
+
+                {/* ACTIONS */}
+                <td>
+                  {c.status !== "Resolved" ? (
+                    <>
+                      <button
+                        className="btn-progress"
+                        onClick={() =>
+                          updateComplaint(
+                            c.id,
+                            "In Progress",
+                            c.priority,
+                            c.remark
+                          )
+                        }
+                      >
+                        Progress
+                      </button>
+
+                      <button
+                        className="btn-resolve"
+                        onClick={() =>
+                          updateComplaint(
+                            c.id,
+                            "Resolved",
+                            c.priority,
+                            c.remark
+                          )
+                        }
+                      >
+                        Resolve
+                      </button>
+                    </>
+                  ) : (
+                    <span style={{ color: "green", fontWeight: "bold" }}>
+                      ✔ Completed
                     </span>
-                  </td>
+                  )}
+                </td>
 
-                  <td className="action-buttons">
-                    <button
-                      className="btn-progress"
-                      onClick={() => updateStatus(c.id, "In Progress")}
-                    >
-                      Mark Progress
-                    </button>
+                {/* 🔥 CREATED DATE */}
+                <td>
+                  {c.createdAt
+                    ? new Date(c.createdAt).toLocaleString()
+                    : "—"}
+                </td>
 
-                    <button
-                      className="btn-resolve"
-                      onClick={() => updateStatus(c.id, "Resolved")}
-                    >
-                      Resolve
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                {/* 🔥 RESOLVED DATE */}
+                <td>
+                  {c.resolvedAt
+                    ? new Date(c.resolvedAt).toLocaleString()
+                    : "—"}
+                </td>
 
-              {complaints.length === 0 && (
-                <tr>
-                  <td colSpan="4" style={{ textAlign: "center", padding: "20px" }}>
-                    No complaints found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              </tr>
+            ))}
 
+            {complaints.length === 0 && (
+              <tr>
+                <td colSpan="9" style={{ textAlign: "center", padding: "20px" }}>
+                  No complaints found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
+
     </div>
   );
 }

@@ -1,5 +1,7 @@
 package solo.project.demo.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,11 +25,16 @@ public class ComplaintEntity {
     private String title;
     private String description;
     private String status;
+    private String filePath;
     private String remark;
     private String priority;
-
+    private LocalDateTime createdAt;
+    private LocalDateTime resolvedAt;
+    
     @ManyToOne
     @JoinColumn(name = "user_id")
+
+    
     private UserEntity user;
 
 }
