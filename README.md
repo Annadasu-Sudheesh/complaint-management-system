@@ -1,4 +1,4 @@
-# 📘 README.md
+#  README.md
 
 ## Title
 
@@ -182,6 +182,10 @@ Backend:
 Sudheesh Annadasu
 GitHub: https://github.com/Annadasu-Sudheesh
 
+<<<<<<< HEAD
 ## 13. Conclusion
 
+=======
+## 12. Conclusion
+>>>>>>> 970d057fc15fa5f16659effa7ac7392787bcd42d
 This system provides an efficient and scalable solution for complaint handling with modern features like file uploads, priority management, timestamps, and role-based access, ensuring transparency and improved workflow.
