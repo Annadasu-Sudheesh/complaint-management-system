@@ -1,19 +1,28 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { apiClient } from "../config/api";
 import "../Login.css";
 
 function Login() {
+  const [mode, setMode] = useState("student-login");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("STUDENT");
   const navigate = useNavigate();
+
+  const clearForm = () => {
+    setName("");
+    setEmail("");
+    setPassword("");
+  };
 
   const login = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:8080/login", {
+      const role = mode === "admin-login" ? "ADMIN" : "STUDENT";
+
+      const res = await apiClient.post("/login", {
         email,
         password,
         role,
@@ -31,6 +40,24 @@ function Login() {
     }
   };
 
+  const signup = async (e) => {
+    e.preventDefault();
+
+    try {
+      await apiClient.post("/signup", {
+        name,
+        email,
+        password,
+      });
+
+      alert("Registration successful. Please login.");
+      clearForm();
+      setMode("student-login");
+    } catch (err) {
+      alert(err.response?.data || "Signup failed");
+    }
+  };
+
   return (
     <div className="login-container">
 
@@ -44,13 +71,49 @@ function Login() {
       </div>
 
       {/* 🔷 RIGHT SIDE */}
-      <form onSubmit={login} className="login-form">
-        <h2>Login</h2>
-        <p className="subtitle">Access your account</p>
+      <form
+        onSubmit={mode === "student-register" ? signup : login}
+        className="login-form"
+      >
+        <h2>
+          {mode === "student-register"
+            ? "Student Register"
+            : mode === "admin-login"
+            ? "Admin Login"
+            : "Student Login"}
+        </h2>
+        <p className="subtitle">
+          {mode === "student-register"
+            ? "Create a student account"
+            : "Access your account"}
+        </p>
+
+        <select
+          value={mode}
+          onChange={(e) => {
+            setMode(e.target.value);
+            clearForm();
+          }}
+        >
+          <option value="student-login">Student Login</option>
+          <option value="student-register">Student Register</option>
+          <option value="admin-login">Admin Login</option>
+        </select>
+
+        {mode === "student-register" && (
+          <input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        )}
 
         <input
           type="email"
           placeholder="Email"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
@@ -58,16 +121,14 @@ function Login() {
         <input
           type="password"
           placeholder="Password"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
 
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="STUDENT">Student</option>
-          <option value="ADMIN">Admin</option>
-        </select>
-
-        <button type="submit">Login</button>
+        <button type="submit">
+          {mode === "student-register" ? "Register" : "Login"}
+        </button>
       </form>
     </div>
   );

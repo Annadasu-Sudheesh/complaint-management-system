@@ -29,4 +29,17 @@
 
             return ResponseEntity.ok(response);
         }
+
+        // Student signup
+        @PostMapping("/signup")
+        public ResponseEntity<?> signup(@RequestBody UserEntity signupUser) {
+
+            Object response = authService.signup(signupUser);
+
+            if (response instanceof String) {
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            return ResponseEntity.ok(response);
+        }
     }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { apiClient, getApiUrl } from "../config/api";
 import "../Admin.css";
 
 function Admin() {
@@ -18,7 +18,7 @@ function Admin() {
   // 🔄 Fetch all complaints
   const fetchAll = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/all-complaints");
+      const res = await apiClient.get("/all-complaints");
       setComplaints(res.data);
     } catch (err) {
       console.error("Error fetching complaints", err);
@@ -26,13 +26,17 @@ function Admin() {
   };
 
   useEffect(() => {
-    fetchAll();
+    const timerId = window.setTimeout(() => {
+      void fetchAll();
+    }, 0);
+
+    return () => window.clearTimeout(timerId);
   }, []);
 
   // ✅ Update complaint
   const updateComplaint = async (id, status, priority, remark) => {
     try {
-      await axios.put(`http://localhost:8080/complaints/${id}`, {
+      await apiClient.put(`/complaints/${id}`, {
         status,
         priority,
         remark
@@ -152,7 +156,7 @@ function Admin() {
                 <td>
                   {c.filePath ? (
                     <a
-                      href={`http://localhost:8080/${c.filePath}`}
+                      href={getApiUrl(c.filePath)}
                       target="_blank"
                       rel="noreferrer"
                     >

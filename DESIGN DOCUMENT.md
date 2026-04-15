@@ -1,12 +1,15 @@
 # 📄 DESIGN DOCUMENT
 
 ## Title
+
 Smart Complaint Management System
 
 ## 1. Introduction
-The Smart Complaint Management System is a full-stack web application designed to streamline the process of  tracking, and resolving complaints within an organization or university. It enables students to submit complaints with optional file attachments and allows administrators to manage, prioritize, and resolve them efficiently with full tracking.
+
+The Smart Complaint Management System is a full-stack web application designed to streamline the process of tracking, and resolving complaints within an organization or university. It enables students to submit complaints with optional file attachments and allows administrators to manage, prioritize, and resolve them efficiently with full tracking.
 
 ## 2. Objectives
+
 - Provide an easy interface for users to submit complaints
 - Allow file attachments as proof (images/documents)
 - Enable administrators to manage complaints effectively
@@ -15,30 +18,37 @@ The Smart Complaint Management System is a full-stack web application designed t
 - Implement role-based authentication (Student/Admin)
 
 ## 3. System Architecture
+
 The system follows a 3-tier architecture:
 
 Frontend:
+
 - React JS for UI and user interaction
+- Centralized API layer in `src/config/api.js` using an axios instance
+- Backend base URL is loaded from `VITE_API_BASE_URL` (`.env`) for environment-specific deployments
 
 Backend:
+
 - Spring Boot for REST APIs and business logic
 
 Database:
-- MySQL for storing users, complaints, and metadata
+
+- H2 Database for storing users, complaints, and metadata
 
 ## 4. Technologies Used
 
-| Layer           | Technology         |
-|----------------|------------------|
-| Frontend       | React JS (Vite)  |
-| Backend        | Spring Boot      |
-| Database       | MySQL            |
-| API Testing    | Postman          |
-| Version Control| Git & GitHub     |
+| Layer           | Technology      |
+| --------------- | --------------- |
+| Frontend        | React JS (Vite) |
+| Backend         | Spring Boot     |
+| Database        | H2 Database     |
+| API Testing     | Postman         |
+| Version Control | Git & GitHub    |
 
 ## 5. Modules
 
 ### User Module:
+
 - Login
 - Submit complaint with file upload
 - View complaint history
@@ -46,6 +56,7 @@ Database:
 - View created and resolved time
 
 ### Admin Module:
+
 - View all complaints
 - Update complaint status (Pending → In Progress → Resolved)
 - Set priority (Low, Medium, High)
@@ -54,6 +65,7 @@ Database:
 - Restrict updates after resolution
 
 ## 6. Functional Requirements
+
 - Secure user authentication
 - Role-based access control
 - Complaint submission with file upload
@@ -67,6 +79,7 @@ Database:
 ## 7. Database Design
 
 ### User Table:
+
 - id (Primary Key)
 - name
 - email
@@ -74,6 +87,7 @@ Database:
 - role (STUDENT / ADMIN)
 
 ### Complaint Table:
+
 - id (Primary Key)
 - title
 - description
@@ -88,14 +102,23 @@ Database:
 ## 8. API Endpoints
 
 ### Authentication:
+
 - POST /login
 - POST /signup
 
 ### Complaints:
+
 - POST /complaints (with file upload)
 - GET /complaints/{userId}
 - GET /all-complaints
 - PUT /complaints/{id}
+
+### Frontend API Integration Notes:
+
+- Frontend uses `apiClient` from `src/config/api.js` for all HTTP requests
+- `apiClient` uses `import.meta.env.VITE_API_BASE_URL` as axios `baseURL`
+- Default fallback for local development is `http://localhost:8080`
+- `getApiUrl(path)` is used for uploaded file URLs to keep base URL consistent
 
 ## 9. System Workflow
 
@@ -129,6 +152,7 @@ Database:
 - Status locking after resolution
 
 ## 11. Future Enhancements
+
 - User profile management
 - Email/SMS notifications
 - Complaint categorization
@@ -137,5 +161,17 @@ Database:
 - Mobile responsive UI improvements
 - Real-time updates using WebSockets
 
-## 12. Conclusion
+## 12. Validation Commands
+
+Frontend validation:
+
+- `npm run build`
+- `npm run lint`
+
+Backend validation:
+
+- `.\\mvnw.cmd test`
+
+## 13. Conclusion
+
 The Smart Complaint Management System provides a robust and scalable solution for managing complaints efficiently. With added features like file uploads, priority management, timestamps, and role-based access, the system ensures transparency, accountability, and improved resolution workflow.

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useCallback, useEffect, useState } from "react";
+import { apiClient, getApiUrl } from "../config/api";
 import "../Dashboard.css";
 
 function Dashboard() {
@@ -11,18 +11,22 @@ function Dashboard() {
   const [complaints, setComplaints] = useState([]);
 
   // 🔄 Fetch complaints
-  const fetchData = async () => {
+  const loadComplaints = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:8080/complaints/${user.id}`);
+      const res = await apiClient.get(`/complaints/${user.id}`);
       setComplaints(res.data);
     } catch (err) {
       console.error("Error fetching complaints", err);
     }
-  };
+  }, [user.id]);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    const timerId = window.setTimeout(() => {
+      void loadComplaints();
+    }, 0);
+
+    return () => window.clearTimeout(timerId);
+  }, [loadComplaints]);
 
   // 📤 Submit complaint
   const submitComplaint = async (e) => {
@@ -35,13 +39,13 @@ function Dashboard() {
       formData.append("userId", user.id);
       if (file) formData.append("file", file);
 
-      await axios.post("http://localhost:8080/complaints", formData);
+      await apiClient.post("/complaints", formData);
 
       setTitle("");
       setDescription("");
       setFile(null);
 
-      fetchData();
+      await loadComplaints();
       alert("Complaint submitted successfully!");
     } catch (err) {
       alert(err.response?.data || "Submission failed");
@@ -152,7 +156,7 @@ function Dashboard() {
                 {/* 📎 FILE */}
                 {c.filePath && (
                   <a
-                    href={`http://localhost:8080/${c.filePath}`}
+                    href={getApiUrl(c.filePath)}
                     target="_blank"
                     rel="noreferrer"
                   >
